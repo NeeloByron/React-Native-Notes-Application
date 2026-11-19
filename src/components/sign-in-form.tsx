@@ -7,6 +7,8 @@ import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import * as React from 'react';
 import { Pressable, type TextInput, View } from 'react-native';
+import { router } from "expo-router";
+import { SignUpForm } from "@/components/sign-up-form";
 
 export function SignInForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
@@ -34,7 +36,7 @@ export function SignInForm() {
               <Label htmlFor="email">Email</Label>
               <Input
                      id="email"
-                     placeholder="m@example.com"
+                     placeholder="sam@example.com"
                      keyboardType="email-address"
                      autoComplete="email"
                      autoCapitalize="none"
@@ -71,9 +73,9 @@ export function SignInForm() {
           </View>
           <Text className="text-center text-sm"> Don&apos;t have an account?{' '}
             <Pressable
-              onPress={() => {
-                // TODO: Navigate to sign up screen
-              }}>
+               onPress={() => {
+                 router.navigate("/sign-up")
+               }}>
               <Text className="text-sm underline underline-offset-4"> Sign up </Text>
             </Pressable>
           </Text>

@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
+import { router } from "expo-router";
 
 export function SignUpForm() {
   const passwordInputRef = React.useRef<React.ComponentRef<typeof Input>>(null);
@@ -77,7 +78,7 @@ export function SignUpForm() {
           <Text className="text-center text-sm"> Already have an account?{' '}
             <Pressable
                      onPress={() => {
-                     // TODO: Navigate to sign in screen
+                     router.navigate("/")
                 }}>
               <Text className="text-sm underline underline-offset-4"> Sign in </Text>
             </Pressable>
