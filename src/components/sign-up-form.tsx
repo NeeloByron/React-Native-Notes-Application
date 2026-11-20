@@ -10,6 +10,13 @@ import { Pressable, View } from 'react-native';
 import { router } from "expo-router";
 
 export function SignUpForm() {
+  // remember what the user types
+  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  // Display feedback below the fields.
+  const [message, setMessage] = React.useState("");
   const passwordInputRef = React.useRef<React.ComponentRef<typeof Input>>(null);
 
   function onEmailSubmitEditing() {
@@ -17,7 +24,34 @@ export function SignUpForm() {
   }
 
   function onSubmit() {
-    // TODO: Submit form and navigate to protected screen if successful
+    setMessage("");
+
+    // Username must contain at least 3 characters.
+   if (username.trim().length < 3) {
+       setMessage("Username must contain at least 3 characters.");
+       return;
+    }
+
+    // require all registeration fields to be filled in.
+    if (!username.trim() || !email.trim() || !password.trim()) {
+      setMessage("Please fill in all fields.");
+      return;
+    }
+
+    // check the basic email format.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setMessage("Please enter a valid email address.");
+      return;
+    }
+
+    // apply our minimum password length.
+    if (password.length < 8) {
+      setMessage("Your password must contain at least 8 characters.");
+      return;
+    }
+
+    // validation 
+    setMessage("Details are valid. Your account has not been created yet.");
   }
 
   return (
@@ -40,7 +74,9 @@ export function SignUpForm() {
                        placeholder="Enter your username"
                        autoComplete="username"
                        autoCapitalize="none"
-                       autoCorrect={false} />
+                       autoCorrect={false} 
+                       value={username}
+                       onChangeText={setUsername} />
               </View>
 
             <View className="gap-1.5">
@@ -53,7 +89,9 @@ export function SignUpForm() {
                     autoCapitalize="none"
                     onSubmitEditing={onEmailSubmitEditing}
                     returnKeyType="next"
-                   submitBehavior="submit" /> 
+                    submitBehavior="submit"
+                    value={email}
+                    onChangeText={setEmail} /> 
             </View>
 
             <View className="gap-1.5">
@@ -66,8 +104,15 @@ export function SignUpForm() {
                     id="password"
                     secureTextEntry
                     returnKeyType="send"
-                    onSubmitEditing={onSubmit} />
+                    onSubmitEditing={onSubmit} 
+                    value={password}
+                    onChangeText={setPassword} />
             </View>
+             
+             {/* Show validation feedback when the user presses Register. */}
+              {message !== "" && (
+               <Text accessibilityRole="alert" className="text-sm">{message}</Text>
+               )}
 
             <Button className="w-full" onPress={onSubmit}>
                <Text> Register </Text>
