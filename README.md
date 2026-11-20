@@ -33,4 +33,11 @@ Start the application:
 npx expo start
 ```
 
-Scan the QR code using Expo Go on your phone.
+# AsyncStorage
+- npx expo install @react-native-async-storage/async-storage
+
+# bcryptjs
+- npm install bcryptjs
+
+# Crypto
+- npx expo install expo-crypto
