@@ -30,7 +30,7 @@ export function SignInForm() {
           <View className="gap-6">
 
             <View className="gap-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium text-[#6d6965]" >Email</Label>
               <Input
                      id="email"
                      placeholder="sam@example.com"
@@ -39,7 +39,9 @@ export function SignInForm() {
                      autoCapitalize="none"
                      onSubmitEditing={onEmailSubmitEditing}
                      returnKeyType="next"
-                     submitBehavior="submit" />
+                     submitBehavior="submit" 
+                     className="h-12 rounded-lg border-[#dedbd7] bg-white text-[#171614]"
+                     placeholderTextColor="#8a8580" />
             </View>
 
             <View className="gap-1.5">
@@ -62,16 +64,18 @@ export function SignInForm() {
                      placeholder="********"
                      secureTextEntry
                      returnKeyType="send"
-                     onSubmitEditing={onSubmit} />
+                     onSubmitEditing={onSubmit} 
+                     className="h-12 rounded-lg border-[#dedbd7] bg-white text-[#171614]"
+                     placeholderTextColor="#8a8580" />
             </View>
 
-            <Button className="w-full" onPress={onSubmit}>
-              <Text>Continue</Text>
+            <Button className="min-h-12 w-full rounded-[9px] bg-[#ffad2f] active:bg-[#f4a62a]" onPress={onSubmit}>
+              <Text className="font-semibold text-[#171614]">Continue</Text>
             </Button>
           </View>
           <Text className="text-center text-sm"> Don&apos;t have an account?{' '}
             <Pressable onPress={() => { router.navigate("/sign-up")}}>
-              <Text className="text-sm underline underline-offset-4"> Sign up </Text>
+              <Text className="text-sm font-semibold text-[#f4a62a] underline underline-offset-4"> Sign up </Text>
             </Pressable>
           </Text>
 

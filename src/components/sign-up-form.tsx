@@ -74,7 +74,9 @@ export function SignUpForm() {
                        autoCapitalize="none"
                        autoCorrect={false} 
                        value={username}
-                       onChangeText={setUsername} />
+                       onChangeText={setUsername} 
+                       className="h-12 rounded-lg border-[#dedbd7] bg-white text-[#171614]"
+                       placeholderTextColor="#8a8580" />
               </View>
 
             <View className="gap-1.5">
@@ -89,7 +91,9 @@ export function SignUpForm() {
                     returnKeyType="next"
                     submitBehavior="submit"
                     value={email}
-                    onChangeText={setEmail} /> 
+                    onChangeText={setEmail} 
+                    className="h-12 rounded-lg border-[#dedbd7] bg-white text-[#171614]"
+                    placeholderTextColor="#8a8580" />
             </View>
 
             <View className="gap-1.5">
@@ -105,7 +109,9 @@ export function SignUpForm() {
                     returnKeyType="send"
                     onSubmitEditing={onSubmit} 
                     value={password}
-                    onChangeText={setPassword} />
+                    onChangeText={setPassword} 
+                    className="h-12 rounded-lg border-[#dedbd7] bg-white text-[#171614]"
+                    placeholderTextColor="#8a8580" />
             </View>
              
              {/* Show validation feedback when the user presses Register. */}
@@ -113,8 +119,8 @@ export function SignUpForm() {
                <Text accessibilityRole="alert" className="text-sm">{message}</Text>
                )}
 
-            <Button className="w-full" onPress={onSubmit}>
-               <Text> Register </Text>
+            <Button className="min-h-12 w-full rounded-[9px] bg-[#ffad2f] active:bg-[#f4a62a]" onPress={onSubmit}>
+               <Text className="font-semibold text-[#171614]"> Register </Text>
            </Button>
           </View>
 
@@ -124,7 +130,7 @@ export function SignUpForm() {
                      onPress={() => {
                      router.navigate("/sign-in")
                 }}>
-              <Text className="text-sm underline underline-offset-4"> Sign in </Text>
+              <Text className="text-sm font-semibold text-[#f4a62a] underline underline-offset-4"> Sign in </Text>
             </Pressable>
           </Text>
 
