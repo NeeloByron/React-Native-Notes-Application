@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
@@ -55,11 +54,11 @@ export function SignUpForm() {
 
   return (
     <View className="gap-6">
-      <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5">
+      <Card className="rounded-[28px] border-0 bg-white py-6 shadow-none">
 
         <CardHeader>
-           <CardTitle className="text-center text-xl sm:text-left"> Create your account</CardTitle>
-           <CardDescription className="text-center sm:text-left"> Welcome! Please fill in your details </CardDescription>
+           <CardTitle className="text-center text-xl font-bold text-[#171614]"> Create your account</CardTitle>
+           <CardDescription className="text-center text-[#6d6965]"> Welcome! Please fill in your details </CardDescription>
         </CardHeader>
 
         <CardContent className="gap-6">
@@ -82,7 +81,7 @@ export function SignUpForm() {
               <Label htmlFor="email"> Email </Label>
               <Input
                     id="email"
-                    placeholder="sam@example.com"
+                    placeholder="Enter your email"
                     keyboardType="email-address"
                     autoComplete="email"
                     autoCapitalize="none"
@@ -101,6 +100,7 @@ export function SignUpForm() {
               <Input
                     ref={passwordInputRef as any}
                     id="password"
+                    placeholder="********"
                     secureTextEntry
                     returnKeyType="send"
                     onSubmitEditing={onSubmit} 
@@ -122,7 +122,7 @@ export function SignUpForm() {
           <Text className="text-center text-sm"> Already have an account?{' '}
             <Pressable
                      onPress={() => {
-                     router.navigate("/")
+                     router.navigate("/sign-in")
                 }}>
               <Text className="text-sm underline underline-offset-4"> Sign in </Text>
             </Pressable>

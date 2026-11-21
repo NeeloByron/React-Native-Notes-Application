@@ -20,10 +20,10 @@ export function SignInForm() {
 
   return (
     <View className="gap-6">
-      <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5">
+      <Card className="rounded-[28px] border-0 bg-white py-6 shadow-none">
         <CardHeader>
-          <CardTitle className="text-center text-xl sm:text-left"> Sign in to your app </CardTitle>
-          <CardDescription className="text-center sm:text-left"> Welcome back! Please sign in to continue </CardDescription>
+          <CardTitle className="text-center text-xl font-bold text-[#171614]"> Sign in to your app </CardTitle>
+          <CardDescription className="text-center text-[#6d6965]"> Welcome back! Please sign in to continue </CardDescription>
         </CardHeader>
 
         <CardContent className="gap-6">
@@ -59,6 +59,7 @@ export function SignInForm() {
               <Input
                      ref={passwordInputRef as any}
                      id="password"
+                     placeholder="********"
                      secureTextEntry
                      returnKeyType="send"
                      onSubmitEditing={onSubmit} />
@@ -69,10 +70,7 @@ export function SignInForm() {
             </Button>
           </View>
           <Text className="text-center text-sm"> Don&apos;t have an account?{' '}
-            <Pressable
-               onPress={() => {
-                 router.navigate("/sign-up")
-               }}>
+            <Pressable onPress={() => { router.navigate("/sign-up")}}>
               <Text className="text-sm underline underline-offset-4"> Sign up </Text>
             </Pressable>
           </Text>

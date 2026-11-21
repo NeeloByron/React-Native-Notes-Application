@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function SignUpScreen() {
   return (
     // Keeps the content away from the phone's system bars.
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-[#efede9]">
         
       {/* Make space when the keyboard opens. */}
       <KeyboardAvoidingView
