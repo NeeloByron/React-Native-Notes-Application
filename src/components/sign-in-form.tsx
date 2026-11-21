@@ -1,14 +1,11 @@
-import { SocialConnections } from '@/components/social-connections';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import * as React from 'react';
 import { Pressable, type TextInput, View } from 'react-native';
 import { router } from "expo-router";
-import { SignUpForm } from "@/components/sign-up-form";
 
 export function SignInForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
@@ -80,13 +77,6 @@ export function SignInForm() {
             </Pressable>
           </Text>
 
-          <View className="flex-row items-center">
-            <Separator className="flex-1" />
-            <Text className="text-muted-foreground px-4 text-sm"> or </Text>
-            <Separator className="flex-1" />
-          </View>
-
-          <SocialConnections />
         </CardContent>
       </Card>
     </View>
