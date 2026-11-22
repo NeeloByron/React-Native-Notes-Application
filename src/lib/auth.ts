@@ -1,10 +1,10 @@
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
 import bcrypt from "bcryptjs";
 
 // The key used to identify our saved accounts.
 const USERS_STORAGE_KEY = "notes_app_users";
+const CURRENT_USER_STORAGE_KEY = "notes_app_current_user";
 
 // Define the information we save for each account.
 export type StoredUser = {
@@ -95,4 +95,55 @@ export async function registerUser(
   const { passwordHash: _, ...safeUser } = newUser;
 
   return safeUser;
+}
+
+// Check a sign-in attempt against the accounts saved on this device.
+export async function signInUser(
+  email: string,
+  password: string
+): Promise<UserAccount> {
+  const cleanEmail = email.trim().toLowerCase();
+
+  if (!cleanEmail || !password) {
+    throw new Error("Please enter your email and password.");
+  }
+
+  const users = await getStoredUsers();
+  const user = users.find((storedUser) => storedUser.email === cleanEmail);
+
+  if (!user) {
+    throw new Error("Email or password is incorrect.");
+  }
+
+  const passwordIsCorrect = await bcrypt.compare(
+    password,
+    user.passwordHash
+  );
+
+  if (!passwordIsCorrect) {
+    throw new Error("Email or password is incorrect.");
+  }
+
+  const { passwordHash: _, ...safeUser } = user;
+
+  await AsyncStorage.setItem(
+    CURRENT_USER_STORAGE_KEY,
+    JSON.stringify(safeUser)
+   );
+
+  return safeUser;
+}
+
+export async function getCurrentUser(): Promise<UserAccount | null> {
+  const savedUser = await AsyncStorage.getItem(CURRENT_USER_STORAGE_KEY);
+
+  if (!savedUser) {
+    return null;
+  }
+
+  return JSON.parse(savedUser) as UserAccount;
+}
+
+export async function signOutUser(): Promise<void> {
+  await AsyncStorage.removeItem(CURRENT_USER_STORAGE_KEY);
 }

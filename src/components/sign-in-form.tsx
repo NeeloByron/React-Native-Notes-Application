@@ -6,17 +6,34 @@ import { Text } from '@/components/ui/text';
 import * as React from 'react';
 import { Pressable, type TextInput, View } from 'react-native';
 import { router } from "expo-router";
+import { signInUser } from "@/lib/auth";
 
 export function SignInForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [message, setMessage] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   function onEmailSubmitEditing() {
     (passwordInputRef.current as unknown as { focus: () => void } | null)?.focus();
   }
 
-  function onSubmit() {
-    // TODO: Submit form and navigate to protected screen if successful
+  async function onSubmit() {
+  setMessage("");
+  setIsSubmitting(true);
+
+  try {
+    await signInUser(email, password);
+    router.replace("/home");
+  } catch (error) {
+    setMessage(
+      error instanceof Error ? error.message : "Unable to sign in."
+    );
+  } finally {
+    setIsSubmitting(false);
   }
+}
 
   return (
     <View className="gap-6">
@@ -41,7 +58,9 @@ export function SignInForm() {
                      returnKeyType="next"
                      submitBehavior="submit" 
                      className="h-12 rounded-lg border-[#dedbd7] bg-white text-[#171614]"
-                     placeholderTextColor="#8a8580" />
+                     placeholderTextColor="#8a8580"
+                     value={email}
+                     onChangeText={setEmail} />
             </View>
 
             <View className="gap-1.5">
@@ -66,11 +85,18 @@ export function SignInForm() {
                      returnKeyType="send"
                      onSubmitEditing={onSubmit} 
                      className="h-12 rounded-lg border-[#dedbd7] bg-white text-[#171614]"
-                     placeholderTextColor="#8a8580" />
+                     placeholderTextColor="#8a8580" 
+                     value={password}
+                     onChangeText={setPassword} />
             </View>
-
+             
+              {message !== "" && (
+               <Text accessibilityRole="alert" className="text-sm text-[#6d6965]">{message}</Text>
+              )}
             <Button className="min-h-12 w-full rounded-[9px] bg-[#ffad2f] active:bg-[#f4a62a]" onPress={onSubmit}>
-              <Text className="font-semibold text-[#171614]">Continue</Text>
+              <Text className="font-semibold text-[#171614]">
+                {isSubmitting ? "Signing in..." : "Continue"}
+               </Text>
             </Button>
           </View>
           <Text className="text-center text-sm"> Don&apos;t have an account?{' '}

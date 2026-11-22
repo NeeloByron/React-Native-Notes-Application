@@ -6,6 +6,7 @@ import { Text } from '@/components/ui/text';
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 import { router } from "expo-router";
+import { registerUser } from "@/lib/auth";
 
 export function SignUpForm() {
   // remember what the user types
@@ -15,42 +16,32 @@ export function SignUpForm() {
 
   // Display feedback below the fields.
   const [message, setMessage] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const passwordInputRef = React.useRef<React.ComponentRef<typeof Input>>(null);
 
   function onEmailSubmitEditing() {
     (passwordInputRef.current as unknown as { focus: () => void } | null)?.focus();
   }
 
-  function onSubmit() {
-    setMessage("");
+  async function onSubmit() {
+  setMessage("");
+  setIsSubmitting(true);
 
-    // Username must contain at least 3 characters.
-   if (username.trim().length < 3) {
-       setMessage("Username must contain at least 3 characters.");
-       return;
-    }
+  try {
+    const user = await registerUser(username, email, password);
 
-    // require all registeration fields to be filled in.
-    if (!username.trim() || !email.trim() || !password.trim()) {
-      setMessage("Please fill in all fields.");
-      return;
-    }
-
-    // check the basic email format.
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setMessage("Please enter a valid email address.");
-      return;
-    }
-
-    // apply our minimum password length.
-    if (password.length < 8) {
-      setMessage("Your password must contain at least 8 characters.");
-      return;
-    }
-
-    // validation 
-    setMessage("Details are valid. Your account has not been created yet.");
+    setMessage(`Account created for ${user.username}. You can now sign in.`);
+    setUsername("");
+    setEmail("");
+    setPassword("");
+  } catch (error) {
+    setMessage(
+      error instanceof Error ? error.message : "Unable to create your account."
+    );
+  } finally {
+    setIsSubmitting(false);
   }
+}
 
   return (
     <View className="gap-6">
@@ -120,7 +111,7 @@ export function SignUpForm() {
                )}
 
             <Button className="min-h-12 w-full rounded-[9px] bg-[#ffad2f] active:bg-[#f4a62a]" onPress={onSubmit}>
-               <Text className="font-semibold text-[#171614]"> Register </Text>
+               <Text className="font-semibold text-[#171614]"> {isSubmitting ? "Creating account..." : "Register"} </Text>
            </Button>
           </View>
 
