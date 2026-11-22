@@ -1,9 +1,9 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View, } from "react-native";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getCurrentUser } from "@/lib/auth";
-import { createNote, getNotesForUser, updateNote, type NoteCategory } from "@/lib/notes";
+import { createNote, deleteNote, getNotesForUser, updateNote, type NoteCategory } from "@/lib/notes";
 
 const categories: NoteCategory[] = ["Work", "Study", "Personal"];
 
@@ -82,6 +82,39 @@ export default function NoteEditorScreen() {
     }
   }
 
+  async function handleDelete() {
+  if (!noteId) return;
+
+  try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      router.replace("/welcome");
+      return;
+    }
+
+    await deleteNote(user.id, noteId);
+    router.back();
+  } catch (error) {
+    setMessage(
+      error instanceof Error ? error.message : "Unable to delete note."
+    );
+  }
+}
+
+   function confirmDelete() {
+     Alert.alert("Delete note?", "This note will be permanently deleted.", [
+       { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+          void handleDelete();
+         },
+       },
+    ]);
+   }
+
   if (isLoadingNote) {
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-[#efede9]">
@@ -147,9 +180,18 @@ export default function NoteEditorScreen() {
             {isSaving ? (
               <ActivityIndicator color="#171614" />
             ) : (
-              <Text className="font-semibold text-[#171614]">Save Note</Text>
+              <Text className="font-semibold text-[#171614]">Save</Text>
             )}
           </Pressable>
+
+          {noteId && (
+           <Pressable
+                     accessibilityRole="button"
+                     onPress={confirmDelete}
+                     className="mt-3 min-h-12 items-center justify-center rounded-[9px] border border-red-300 bg-white">
+              <Text className="font-semibold text-red-600">Delete</Text>
+            </Pressable>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
