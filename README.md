@@ -1,23 +1,26 @@
 # React Native Notes Application
 
-A notes application built with React Native, Expo and TypeScript.
+A mobile notes application built with React Native, Expo, TypeScript, and NativeWind.
 
-## Current Progress
+## Features
 
-- Initial Expo setup completed.
-- Starter boilerplate removed.
-- Basic home screen and navigation layout added.
+- Welcome screen with Sign In and Sign Up navigation.
+- Local account registration and sign-in.
+- Password hashing with `bcryptjs`.
+- Persistent signed-in session and sign-out.
+- Create, view, edit, and delete notes.
+- Work, Study, and Personal note categories with category filters.
+- Automatic note creation and edit timestamps.
+- Search notes by title or content.
+- Sort notes by creation date, newest or oldest first.
+- Store accounts and notes locally with AsyncStorage.
 
-## Planned Features
+## Current Limitations
 
-- Registration, login and protected navigation.
-- Profile and credential updates.
-- Create, view, edit and delete notes.
-- Separate category pages for Work, Study and Personal.
-- Automatic creation and edit timestamps.
-- Search notes by text.
-- Sort notes by date, oldest or newest first.
-- Local note storage using AsyncStorage.
+- Accounts and notes are stored on the device and do not sync across devices.
+- Profile and credential updates are not implemented yet.
+- Categories are filtered on the Home screen; they do not have separate pages yet.
+- Route protection still needs to be completed for every notes route.
 
 ## Run Locally
 
@@ -25,19 +28,3 @@ Install dependencies:
 
 ```bash
 npm install
-```
-
-Start the application:
-
-```bash
-npx expo start
-```
-
-# AsyncStorage
-- npx expo install @react-native-async-storage/async-storage
-
-# bcryptjs
-- npm install bcryptjs
-
-# Crypto
-- npx expo install expo-crypto
