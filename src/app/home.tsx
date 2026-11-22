@@ -1,5 +1,5 @@
-import { Redirect, router } from "expo-router";
-import { useEffect, useState } from "react";
+import { Redirect, router, useFocusEffect } from "expo-router";
+import { useEffect, useState, useCallback } from "react";
 import { ActivityIndicator, FlatList, Pressable, Text, View,  } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getCurrentUser, signOutUser, type UserAccount, } from "@/lib/auth";
@@ -10,20 +10,24 @@ export default function HomeScreen() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     let isMounted = true;
 
     async function loadHome() {
-      try {
-        const savedUser = await getCurrentUser();
+      setIsLoading(true);
 
-        if (!isMounted) return;
-        setUser(savedUser);
+    try {
+         const savedUser = await getCurrentUser();
 
-        if (savedUser) {
+         if (!isMounted) return;
+         setUser(savedUser);
+
+         if (savedUser) {
           const savedNotes = await getNotesForUser(savedUser.id);
-          if (isMounted) setNotes(savedNotes);
-        }
+          
+         if (isMounted) setNotes(savedNotes);
+         }
       } catch {
         if (isMounted) setUser(null);
       } finally {
@@ -31,12 +35,13 @@ export default function HomeScreen() {
       }
     }
 
-    loadHome();
+     loadHome();
 
-    return () => {
+     return () => {
       isMounted = false;
-    };
-  }, []);
+     };
+   }, [])
+ );
 
   async function handleSignOut() {
     await signOutUser();
@@ -83,16 +88,23 @@ export default function HomeScreen() {
           <Text className="mt-8 text-center text-[#6d6965]">No notes yet. Your notes will appear here.</Text>
         }
         renderItem={({ item }) => (
-          <View className="mb-3 rounded-2xl bg-white p-4">
-            <View className="flex-row items-center justify-between">
-              <Text className="font-semibold text-[#171614]">{item.title}</Text>
-              <Text className="text-xs text-[#8a8580]">{item.category}</Text>
-            </View>
+          <Pressable
+                    onPress={() =>
+                    router.push({
+                    pathname: "/note-editor",
+                    params: { noteId: item.id },
+             })
+           }
+        className="mb-3 rounded-2xl bg-white p-4">
+         <View className="flex-row items-center justify-between">
+            <Text className="font-semibold text-[#171614]">{item.title}</Text>
+            <Text className="text-xs text-[#8a8580]">{item.category}</Text>
+         </View>
 
-            <Text className="mt-2 text-[#6d6965]" numberOfLines={3}>{item.content}</Text>
-            <Text className="mt-3 text-xs text-[#8a8580]">Edited {new Date(item.updatedAt).toLocaleDateString()}</Text>
-          </View>
-        )}
+          <Text className="mt-2 text-[#6d6965]" numberOfLines={3}>{item.content}</Text>
+          <Text className="mt-3 text-xs text-[#8a8580]">Edited {new Date(item.updatedAt).toLocaleDateString()}</Text>
+        </Pressable>
+       )}
       />
     </SafeAreaView>
   );
