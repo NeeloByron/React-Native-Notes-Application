@@ -88,6 +88,13 @@ export default function HomeScreen() {
                 <Text className="text-2xl font-bold text-[#171614]">{" "}Welcome back, {user.username}!</Text>
               </View>
 
+              <Pressable
+                         accessibilityRole="button"
+                         onPress={() => router.push("/profile")}
+                         className="rounded-[9px] bg-white px-4 py-2">
+               <Text className="font-semibold text-[#171614]">Profile</Text>
+              </Pressable>
+
                <Pressable
                          accessibilityRole="button"
                          onPress={handleSignOut}
