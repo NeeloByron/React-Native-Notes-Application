@@ -3,18 +3,23 @@ import { useEffect, useState } from "react";
 import { router, Redirect } from "expo-router";
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getCurrentUser, updateUserProfile, changeUserPassword, type UserAccount, } from "@/lib/auth";
+import { getCurrentUser, updateUserProfile, changeUserPassword, deleteUserAccount, type UserAccount, } from "@/lib/auth";
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<UserAccount | null>(null);
   const [username, setUsername] = useState("");
+ 
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+ 
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+ 
+  const [deletePassword, setDeletePassword] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     async function loadProfile() {
@@ -94,6 +99,47 @@ export default function ProfileScreen() {
       setIsSaving(false);
     }
   }
+
+  async function performAccountDeletion() {
+  if (!user) return;
+
+  setMessage("");
+  setIsDeleting(true);
+
+  try {
+    await deleteUserAccount(user.id, deletePassword);
+    router.replace("/welcome");
+  } catch (error) {
+    setMessage(
+      error instanceof Error ? error.message : "Unable to delete your account."
+    );
+    setIsDeleting(false);
+  }
+}
+
+function handleDeleteAccount() {
+  setMessage("");
+
+  if (!deletePassword) {
+    setMessage("Please enter your password to confirm deletion.");
+    return;
+  }
+
+  Alert.alert(
+    "Permanently delete account?",
+    "Your account and all your notes will be deleted. This action cannot be undone.",
+    [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete account",
+        style: "destructive",
+        onPress: () => {
+          void performAccountDeletion();
+        },
+      },
+    ]
+  );
+}
 
   if (isLoading) {
     return (
@@ -190,6 +236,32 @@ export default function ProfileScreen() {
           </Pressable>
         </View>
 
+        {/* Account deletion requires the password and a final confirmation. */}
+        <View className="mt-5 rounded-2xl border border-red-200 bg-white p-5">
+          <Text className="mb-2 text-lg font-bold text-red-700">Delete Account</Text>
+          <Text className="mb-4 text-sm text-[#6d6965]">This permanently deletes your account and all of your notes.</Text>
+
+          {/* Ask for the current password before showing the final warning. */}
+          <TextInput
+                     value={deletePassword}
+                     onChangeText={setDeletePassword}
+                     secureTextEntry
+                     placeholder="Enter your password"
+                     className="mb-4 rounded-xl border border-[#dedbd7] px-4 py-3 text-[#171614]"/>
+
+          <Pressable
+                     accessibilityRole="button"
+                     disabled={isSaving || isDeleting}
+                     onPress={handleDeleteAccount}
+                     className="min-h-12 items-center justify-center rounded-[9px] bg-red-600">
+            {isDeleting ? (
+              <ActivityIndicator color="#ffffff" />
+              ) : (
+              <Text className="font-semibold text-white">Delete Account</Text>
+            )}
+          </Pressable>
+        </View>
+        
         {message !== "" && (
           <Text accessibilityRole="alert" className="mt-4 text-sm text-red-600">{message}</Text>
         )}
