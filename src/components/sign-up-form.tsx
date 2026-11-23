@@ -13,6 +13,7 @@ export function SignUpForm() {
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
 
   // Display feedback below the fields.
   const [message, setMessage] = React.useState("");
@@ -27,6 +28,12 @@ export function SignUpForm() {
   setMessage("");
   setIsSubmitting(true);
 
+  if (password !== confirmPassword) {
+    setMessage("Passwords do not match.");
+    setIsSubmitting(false);
+    return;
+  }
+
   try {
     const user = await registerUser(username, email, password);
 
@@ -34,6 +41,7 @@ export function SignUpForm() {
     setUsername("");
     setEmail("");
     setPassword("");
+    setConfirmPassword("");
   } catch (error) {
     setMessage(
       error instanceof Error ? error.message : "Unable to create your account."
@@ -104,6 +112,20 @@ export function SignUpForm() {
                     className="h-12 rounded-lg border-[#dedbd7] bg-white text-[#171614]"
                     placeholderTextColor="#8a8580" />
             </View>
+             
+             <View className="gap-1.5">
+               <Label htmlFor="confirmPassword">Confirm Password</Label>
+                 <Input
+                        id="confirmPassword"
+                        placeholder="********"
+                        secureTextEntry
+                        returnKeyType="send"
+                        onSubmitEditing={onSubmit}
+                        value={confirmPassword}
+                        onChangeText={setConfirmPassword}
+                        className="h-12 rounded-lg border-[#dedbd7] bg-white text-[#171614]"
+                        placeholderTextColor="#8a8580"/>
+              </View>
              
              {/* Show validation feedback when the user presses Register. */}
               {message !== "" && (

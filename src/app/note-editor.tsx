@@ -1,9 +1,9 @@
+import { getCurrentUser } from "@/lib/auth";
+import { createNote, deleteNote, getNotesForUser, updateNote, type NoteCategory } from "@/lib/notes";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getCurrentUser } from "@/lib/auth";
-import { createNote, deleteNote, getNotesForUser, updateNote, type NoteCategory } from "@/lib/notes";
 
 const categories: NoteCategory[] = ["Work", "Study", "Personal"];
 
@@ -14,14 +14,13 @@ export default function NoteEditorScreen() {
   const [category, setCategory] = useState<NoteCategory>("Personal");
   const [message, setMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [isLoadingNote, setIsLoadingNote] = useState(Boolean(noteId));
+  const [isLoadingNote, setIsLoadingNote] = useState(true);
    
-  useEffect(() => {
-  if (!noteId) return;
-
+  
+useEffect(() => {
   let isActive = true;
 
-  async function loadNote() {
+  async function initializeEditor() {
     try {
       const user = await getCurrentUser();
 
@@ -30,32 +29,40 @@ export default function NoteEditorScreen() {
         return;
       }
 
-      const notes = await getNotesForUser(user.id);
-      const note = notes.find((savedNote) => savedNote.id === noteId);
+      // Load the note only when editing an existing note.
+      if (noteId) {
+        const notes = await getNotesForUser(user.id);
+        const note = notes.find((savedNote) => savedNote.id === noteId);
 
-      if (!note) {
-        if (isActive) setMessage("Note not found.");
-        return;
-      }
+        if (!note) {
+          if (isActive) setMessage("Note not found.");
+          return;
+        }
 
-      if (isActive) {
-        setTitle(note.title);
-        setContent(note.content);
-        setCategory(note.category);
+        if (isActive) {
+          setTitle(note.title);
+          setContent(note.content);
+          setCategory(note.category);
+        }
       }
     } catch {
-      if (isActive) setMessage("Unable to load this note.");
+      if (isActive) {
+        setMessage("Unable to load the note.");
+      }
     } finally {
-      if (isActive) setIsLoadingNote(false);
+      if (isActive) {
+        setIsLoadingNote(false);
+      }
     }
   }
 
-  loadNote();
+  initializeEditor();
 
   return () => {
     isActive = false;
   };
 }, [noteId]);
+
 
   async function handleSave() {
     setMessage("");
