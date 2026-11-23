@@ -117,7 +117,7 @@ export function SignUpForm() {
                <Label htmlFor="confirmPassword">Confirm Password</Label>
                  <Input
                         id="confirmPassword"
-                        placeholder="Confirm your password"
+                        placeholder="********"
                         secureTextEntry
                         returnKeyType="send"
                         onSubmitEditing={onSubmit}
