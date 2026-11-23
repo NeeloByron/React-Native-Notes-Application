@@ -63,25 +63,35 @@ export default function HomeScreen() {
     return <Redirect href="/welcome" />;
   }
 
-  const normalizedQuery = searchQuery.trim().toLowerCase();
-  const visibleNotes = notes.filter((note) => {
-  const matchesSearch = `${note.title} ${note.content}`.toLowerCase().includes(normalizedQuery);
-  const matchesCategory =selectedCategory === "All" || note.category === selectedCategory;
+  
+   const normalizedQuery = searchQuery.trim().toLowerCase();
 
-  return matchesSearch && matchesCategory;
-})
- .sort((a, b) => {
-    const dateOrder = a.createdAt.localeCompare(b.createdAt);
+   const categoryCounts = {
+                         All: notes.length,
+                         Work: notes.filter((note) => note.category === "Work").length,
+                         Study: notes.filter((note) => note.category === "Study").length,
+                         Personal: notes.filter((note) => note.category === "Personal").length,
+   };
+
+    const visibleNotes = notes.filter((note) => {
+    const matchesSearch = `${note.title} ${note.content}`.toLowerCase().includes(normalizedQuery);
+    const matchesCategory = selectedCategory === "All" || note.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  })
+  .sort((a, b) => {
+    const dateOrder = a.updatedAt.localeCompare(b.updatedAt);
     return sortOrder === "newest" ? -dateOrder : dateOrder;
   });
+
 
   return (
     <SafeAreaView className="flex-1 bg-[#efede9]">
       <FlatList
-        data={visibleNotes}
-        keyExtractor={(note) => note.id}
-        contentContainerStyle={{ padding: 24, flexGrow: 1 }}
-        ListHeaderComponent={
+                data={visibleNotes}
+                keyExtractor={(note) => note.id}
+                contentContainerStyle={{ padding: 24, flexGrow: 1 }}
+           ListHeaderComponent={
           <View className="mb-6">
             <View className="flex-row items-start justify-between">
               <View>
@@ -115,11 +125,11 @@ export default function HomeScreen() {
               <View className="mt-4 flex-row flex-wrap gap-2">
                {(["All", "Work", "Study", "Personal"] as const).map((category) => (
                  <Pressable
-                          key={category}
-                          onPress={() => setSelectedCategory(category)}
-                          className={`rounded-full px-4 py-2 ${
-                          selectedCategory === category ? "bg-[#ffad2f]" : "bg-white"}`}>
-           <Text className="text-sm font-medium text-[#171614]">{category}</Text>
+                            key={category}
+                            onPress={() => setSelectedCategory(category)}
+                            className={`rounded-full px-4 py-2 ${
+                             selectedCategory === category ? "bg-[#ffad2f]" : "bg-white"}`}>
+           <Text className="text-sm font-medium text-[#171614]">{category} ({categoryCounts[category]})</Text>
          </Pressable>
         ))}
     </View>
@@ -147,9 +157,11 @@ export default function HomeScreen() {
           </View>
         }
        ListEmptyComponent={
-        <Text className="mt-8 text-center text-[#6d6965]">
-          {notes.length === 0 ? "No notes yet. Your notes will appear here." : "No notes match your search or category."} </Text>
-        }
+        <View className="mt-10 items-center">
+           <Text className="text-lg font-semibold text-[#171614]"> {notes.length === 0 ? "No notes yet" : searchQuery.trim() ? "No matching notes" : `No ${selectedCategory} notes`} </Text>
+           <Text className="mt-2 text-center text-[#6d6965]">{notes.length === 0 ? "Create your first note to get started." : "Try changing your search or selecting another category."}</Text>
+        </View>
+       }
         renderItem={({ item }) => (
           <Pressable
             onPress={() =>

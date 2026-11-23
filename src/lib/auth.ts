@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
 import bcrypt from "bcryptjs";
+import { deleteAllNotesForUser } from "@/lib/notes";
 
 // The key used to identify our saved accounts.
 const USERS_STORAGE_KEY = "notes_app_users";
@@ -240,4 +241,50 @@ export async function changeUserPassword(
   };
 
   await AsyncStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+}
+
+
+export async function deleteUserAccount(
+  userId: string,
+  password: string
+): Promise<void> {
+  if (!password) {
+    throw new Error("Please enter your password to confirm deletion.");
+  }
+
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser || currentUser.id !== userId) {
+    throw new Error("You are not authorized to delete this account.");
+  }
+
+  const users = await getStoredUsers();
+  const userIndex = users.findIndex((user) => user.id === userId);
+
+  if (userIndex === -1) {
+    throw new Error("User account not found.");
+  }
+
+  const passwordIsCorrect = await bcrypt.compare(
+    password,
+    users[userIndex].passwordHash
+  );
+
+  if (!passwordIsCorrect) {
+    throw new Error("Incorrect password. Account deletion cancelled.");
+  }
+
+  // Delete all notes belonging to this user.
+  await deleteAllNotesForUser(userId);
+
+  // Remove the user account.
+  const remainingUsers = users.filter((user) => user.id !== userId);
+
+  await AsyncStorage.setItem(
+    USERS_STORAGE_KEY,
+    JSON.stringify(remainingUsers)
+  );
+
+  // Clear the active session.
+  await signOutUser();
 }

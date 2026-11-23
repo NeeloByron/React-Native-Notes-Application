@@ -110,3 +110,16 @@ export async function deleteNote(
 
   await saveNotes(remainingNotes);
 }
+
+
+export async function deleteAllNotesForUser(
+  userId: string
+): Promise<void> {
+  const notes = await getStoredNotes();
+
+  const remainingNotes = notes.filter(
+    (note) => note.userId !== userId
+  );
+
+  await saveNotes(remainingNotes);
+}
